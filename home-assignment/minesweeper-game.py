@@ -1,9 +1,8 @@
 # minesweeper game home assignment
 
 import random
-# this is a test change
+
 # asking the user to enter grid size and number of mines to be placed in the grid
-# to change
 try:
     while True:
         grid_size = int(input("Enter the board size in square to play: "))
