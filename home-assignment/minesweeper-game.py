@@ -1,6 +1,7 @@
 # minesweeper game home assignment
 
 import random
+import string
 
 # asking the user to enter grid size and number of mines to be placed in the grid
 while True:
@@ -14,14 +15,7 @@ while True:
         print("Error: Invalid input. Please enter a positive number instead of a string.")
     
 
-# except ValueError:
-#     print("Error: Invalid input. Please enter a positive number instead of a string.")
-# except ZeroDivisionError:
-#     print("Error: Invalid input. Please enter a positive number (greater than zero).")
-# else:
-#     print("Let's begin minesweeper game!")
-
-
+# asking the user to input the number of mines to be placed in the game
 while True:
     try:
         num_mines = int(input("Enter the number of mine to be placed in the board: "))
@@ -34,17 +28,33 @@ while True:
 
 print("Let's begin the minesweeper game!")
 
+# using the input to create header of the board_grid
+board_grid_header = list(range(1, grid_size + 1)) 
+
+# using the input to create row alphabets till the length of input in ABC...
+# row_alphabet 
+# string.ascii_uppercase (study this for alphabetic order in list)
+
 # using the input to create a nested list, which serves as a 2D board.
-board_grid = [["#"for i in range(grid_size)] for j in range(grid_size)]
+board_grid = [["#" for i in range(grid_size)] for j in range(grid_size)]
+
+# print(board_grid_header)
+print(" ".join([str(heading) for heading in board_grid_header]))
+
+# print(' '.join(map(str, board_grid_header)))
+
+# printing the board size in 2D shape with rows and columns as grid_size
+for row in board_grid:
+    print(' '.join(row))
+    
+
+# print('\n'.join([''.join(['{:4}'.format(item) for item in row]) 
+#       for row in board_grid]))
 
 # placing the mines using random
-# mine_location = random.sample(range(grid_size ** 2), num_mines)
+mine_location = random.sample(range(grid_size ** 2), num_mines)
 # how to represent a mine with "X" or "*"
 
-# how to display the grid in 2D instead of a single line?
-# how to present it in columns as 1, 2, 3, 4 and rows as A, B, C, D etc
-
-# assuming it is done, asking the user to reveal a number
 
 # reveal = input("What field to reveal?")
 
