@@ -3,7 +3,7 @@
 import random
 import string
 
-# asking the user to enter grid size and number of mines to be placed in the grid
+# asking the user to enter grid size
 while True:
     try:    
         grid_size = int(input("Enter the board size in square to play: "))
@@ -15,7 +15,7 @@ while True:
         print("Error: Invalid input. Please enter a positive number instead of a string.")
     
 
-# asking the user to input the number of mines to be placed in the game
+# asking the user to input the number of mines to be placed in the board
 while True:
     try:
         num_mines = int(input("Enter the number of mine to be placed in the board: "))
@@ -29,14 +29,22 @@ while True:
 print("Let's begin the minesweeper game!")
 
 # using the input to create header of the board_grid
-board_grid_header = list(range(1, grid_size + 1)) 
-
-# using the input to create row alphabets till the length of input in ABC...
-# row_alphabet 
-# string.ascii_uppercase (study this for alphabetic order in list)
+board_grid_header = []
+for l in range(grid_size):
+    board_grid_header.append(l + 1)
+    
+board_grid_header = [" "] + board_grid_header
+# board_grid_header = list(range(1, grid_size + 1)) 
 
 # using the input to create a nested list, which serves as a 2D board.
-board_grid = [["#" for i in range(grid_size)] for j in range(grid_size)]
+board_grid = [["#" for aw in range(grid_size+1)] for j in range(grid_size+1)]
+board_grid[0][0] = " "
+# using the input to create row alphabets till the length of input in ABC...
+# string.ascii_uppercase (study this for alphabetic order in list)
+
+for tree in range(1, grid_size + 1):
+    board_grid[tree][0] = string.ascii_uppercase[tree - 1]  # Using ASCII values to get A, B, C, ...
+
 
 # print(board_grid_header)
 print(" ".join([str(heading) for heading in board_grid_header]))
@@ -67,7 +75,7 @@ for row in board_grid: print row      for the column name ASCII_
 hide it or have a completely separate data structure (recommended) - for the showing part
 sentdex python
 use random.randit
-
+use slices to create new list, it produces slice from start to end-1   my_list[start:end]
 """
 
 
