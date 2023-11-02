@@ -29,22 +29,20 @@ while True:
 print("Let's begin the minesweeper game!")
 
 # using the input to create header of the board_grid
-board_grid_header = []
-for l in range(grid_size):
-    board_grid_header.append(l + 1)
-    
+board_grid_header = list(range(1, grid_size + 1))    
 board_grid_header = [" "] + board_grid_header
-# board_grid_header = list(range(1, grid_size + 1)) 
+ 
+# board_grid_header = []
+# for l in range(grid_size):
+#     board_grid_header.append(l + 1)
 
 # using the input to create a nested list, which serves as a 2D board.
-board_grid = [["#" for aw in range(grid_size+1)] for j in range(grid_size+1)]
-board_grid[0][0] = " "
+board_grid = [["#" for i in range(grid_size + 1)] for j in range(grid_size + 1)]
+board_grid[0] = " "
+
 # using the input to create row alphabets till the length of input in ABC...
-# string.ascii_uppercase (study this for alphabetic order in list)
-
-for tree in range(1, grid_size + 1):
-    board_grid[tree][0] = string.ascii_uppercase[tree - 1]  # Using ASCII values to get A, B, C, ...
-
+for row_chr in range(1, grid_size + 1):
+    board_grid[row_chr][0] = string.ascii_uppercase[row_chr - 1]  # Using ASCII values to get A, B, C, ...
 
 # print(board_grid_header)
 print(" ".join([str(heading) for heading in board_grid_header]))
@@ -55,14 +53,17 @@ print(" ".join([str(heading) for heading in board_grid_header]))
 for row in board_grid:
     print(' '.join(row))
     
-
 # print('\n'.join([''.join(['{:4}'.format(item) for item in row]) 
 #       for row in board_grid]))
 
 # placing the mines using random
-mine_location = random.sample(range(grid_size ** 2), num_mines)
-# how to represent a mine with "X" or "*"
-
+mine_location = []
+while num_mines > len(mine_location):
+    r_rand = random.randint(0, grid_size - 1)
+    c_rand = random.randint(0, grid_size - 1)
+    
+    if (r_rand, c_rand) not in mine_location:
+        mine_location.append((r_rand, c_rand))
 
 # reveal = input("What field to reveal?")
 
@@ -70,11 +71,8 @@ mine_location = random.sample(range(grid_size ** 2), num_mines)
 #    if board_grid != "mine_location":
 #        mines_nearby = 0
 """ 
-try except for python
-for row in board_grid: print row      for the column name ASCII_
+
 hide it or have a completely separate data structure (recommended) - for the showing part
-sentdex python
-use random.randit
 use slices to create new list, it produces slice from start to end-1   my_list[start:end]
 """
 
