@@ -21,8 +21,6 @@ while True:
     except ValueError:
         print("Error: Invalid input. Please enter a positive number instead of a string.")
     
-# 3 different = Easy, Medium, Hard, Expert
-# pygame or tkinter or pyqt5
 
 # asking the user to input the number of mines to be placed in the board
 while True:
@@ -37,16 +35,16 @@ while True:
 
 print("Let's begin the minesweeper game!")
 
-# using the input to create header of the board_grid
-# board_grid_header = list(range(1, grid_size + 1))    
-# board_grid_header = [" "] + board_grid_header
 
 # using the input to create a nested list, which serves as a 2D board with its headings
 board_grid = [["#" for i in range(grid_size + 1)] for j in range(grid_size + 1)]
 board_grid[0] = [" "] + list(range(1, grid_size + 1))   # to add headings as 1, 2, 3, ...
+# should I convert the board_grid[0] to "str" so they don't count 
+# when mines nearby are being calculated
 
 for row_chr in range(1, grid_size + 1):
     board_grid[row_chr][0] = string.ascii_uppercase[row_chr - 1]  # using ASCII values to get A, B, C, ...
+
 
 # placing the mines using random
 mine_location = []
@@ -58,14 +56,11 @@ while num_mines > len(mine_location):
         mine_location.append((r_rand, c_rand))
        
 
-# print(board_grid_header)
-# print(" ".join([str(heading) for heading in board_grid_header]))
-# print(' '.join(map(str, board_grid_header)))
-
 # printing the board size in 2D shape with rows and columns as grid_size
 def displayBoard():
     for row in board_grid:
         print(' '.join([str(cell) for cell in row]))
+
 
 # validating the input to reveal a field from the board
 def valid_reveal_input(alpha_str):
@@ -83,21 +78,42 @@ def valid_reveal_input(alpha_str):
 
 displayBoard()    
 
-# print('\n'.join([''.join(['{:4}'.format(item) for item in row]) 
-#       for row in board_grid]))
 
 # creating a game loop
 
 # asking the user to reveal a field
-while True
+while True:
     reveal = input("Which field to reveal?")
     if valid_reveal_input(reveal):
         print("Let's see if you hit a mine!")
     else:
         print("Error! Invalid input: Please enter a valid field (A1, B2, C3...).")
-# the first one is a letter, but the others are numbers (but in this case the numbers may go outside)
 
-# how to ensure the user only inputs A1, B2 , C3 . . . .
+# determining the neighbouring mines in board_grid
+def neighbouring_mines(row, col, grid_size, baord_grid):
+    mine_count = 0      # total number of mines nearby
+    for r in range(row - 1, row + 2):
+        for c in range(col - 1, col + 2):
+            if 0 <= r < grid_size and 0 <= c < grid_size:
+                if board_grid[r][c] == "X":         # representing "X" here for a mine
+                    mine_count += 1
+    return mine_count
+
+# previously tried this with both while and for loop, but apparently it has errors.
+# then fine-tuned the code and asked ChatGPT to evaluate the final version
+# it still had errors such range of c was not within range of r
+
+# def neighbouring_mines(row, col, grid_size):
+#     mine_count = 0      # total number of mines nearby
+#     r = row - 1
+#     while r <= row + 1:      # to check in rows from a range between (row - 1, row + 1)
+#         if r >= 0 and r < grid_size:
+#             r += 1
+#     c = col - 1
+#     while c <= col + 1:
+#         if c >= 0 and c < grid_size:
+#             c += 1
+#     return mine_count
 
 # if __name__ == "__main__":
 #     game_over = False
@@ -109,13 +125,13 @@ while True
 #check within my function, whether it is over or not
 #situations in which the game is over.
 
-""" 
+    """ 
+    hide it or have a completely separate data structure (recommended) - for the showing part
+    use slices to create new list, it produces slice from start to end-1   my_list[start:end]
+    """
 
-hide it or have a completely separate data structure (recommended) - for the showing part
-use slices to create new list, it produces slice from start to end-1   my_list[start:end]
-"""
+# print('\n'.join([''.join(['{:4}'.format(item) for item in row]) 
+#       for row in board_grid]))
 
-# board_grid_header = []
-# for l in range(grid_size):
-#     board_grid_header.append(l + 1)
-
+# can also create 3/4 different levels of game = Easy, Medium, Hard / Expert
+# pygame or tkinter or pyqt5
