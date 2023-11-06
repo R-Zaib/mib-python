@@ -35,7 +35,6 @@ while True:
 
 print("Let's begin the minesweeper game!")
 
-
 # using the input to create a nested list, which serves as a 2D board with its headings
 board_grid = [["#" for i in range(grid_size + 1)] for j in range(grid_size + 1)]
 board_grid[0] = [" "] + list(range(1, grid_size + 1))   # to add headings as 1, 2, 3, ...
@@ -68,7 +67,7 @@ def valid_reveal_input(alpha_str):
         return False
     letter = alpha_str[0]
     number = alpha_str[1]
-    if not letter.isalpha() and not letter.isupper():
+    if not letter.isalpha() or not letter.isupper():
         return False
     if not number.isdigit() or int(number) < 1:
         return False
@@ -102,6 +101,8 @@ def neighbouring_mines(row, col, grid_size, baord_grid):
 # previously tried this with both while and for loop, but apparently it has errors.
 # then fine-tuned the code and asked ChatGPT to evaluate the final version
 # it still had errors such range of c was not within range of r
+
+# this is comment for testing purpose only
 
 # def neighbouring_mines(row, col, grid_size):
 #     mine_count = 0      # total number of mines nearby
