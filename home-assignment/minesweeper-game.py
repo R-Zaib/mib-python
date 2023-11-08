@@ -2,6 +2,7 @@ import random
 import string
 import copy
 
+random.seed(1) # to fix the random selection, remove it after testing
 
 # def game_loop():
 #this will be the main game loop , have to handle the guesses of the user here, 
@@ -66,8 +67,9 @@ def game_array(board_grid):
     return board_grid_representation
 
 # printing the board size in 2D shape with rows and columns as grid_size
-def displayBoard(grid):
-    for row in grid:
+def display_board(board_grid):
+    board_grid_representation = game_array(board_grid)
+    for row in board_grid_representation:
         print(' '.join([str(cell) for cell in row]))
 
 # validating the input to reveal a field from the board
@@ -91,47 +93,72 @@ def convert_alphanumeric_input_to_grid_coordinate(reveal, row_alphabets):
     col_index = int(col_index) - 1
     return (row_index, col_index)
 
-# data structure
-
-grid_size, num_mines = get_game_input_parameters()                          # call the function to get grid_size and num_mines
-board_grid = [["#" for i in range(grid_size)] for j in range(grid_size)]    # to create 2D array
-mines_location = determine_mines_location(grid_size, num_mines)             # extracting mine locations
-print(mines_location)
-place_mines(board_grid, mines_location)                                     # call game_array function to extract grid representation
-board_grid_representation = game_array(board_grid)
-displayBoard(board_grid_representation)
-
-
-# creating a game loop
-
-
-row_alphabets = string.ascii_uppercase[:grid_size]
-while True:
-    reveal = input("Which field to reveal?")            # asking the user to reveal a field
-    if valid_reveal_input(reveal, row_alphabets,grid_size):
-        print("Let's see if you hit a mine!")
-        neighbouring_mines(row, col, mines_location, grid_size)
-        break
-    else:
-        print("Error! Invalid input: Please enter a valid field (A1, B2, C3...).")    
-
-# convert ABC to integer value --> use function like ord to convert character to int using ascii character
-
 # determining the neighbouring mines in board_grid
+def determine_neighbours_location(x_coordinate, y_coordinate):
+    neighbour_r_indices = [x_coordinate - 1, x_coordinate, x_coordinate + 1] 
+    neighbour_c_indices = [y_coordinate - 1, y_coordinate, y_coordinate + 1]
+
+    valid_neighbour_r_list = []
+    for index in neighbour_r_indices:
+        if MIN_INDEX_VALUE <= index <= MAX_INDEX_VALUE:
+            valid_neighbour_r_list.append(index)
+    
+    valid_neighbour_c_list = []
+    for index in neighbour_c_indices:
+        if MIN_INDEX_VALUE <= index <= MAX_INDEX_VALUE:
+            valid_neighbour_c_list.append(index)
+
+    neighbour_location_pairs = []
+    for row in valid_neighbour_r_list:
+        for col in valid_neighbour_c_list:
+            pair = (row, col)
+            neighbour_location_pairs.append(pair)
+
+    remove_pair = (x_coordinate, y_coordinate)
+    neighbour_location_pairs.remove(remove_pair)
+    return neighbour_location_pairs
+
 
 def neighbouring_mines(row, col, mines_location, grid_size):
     mine_count = 0      # total number of mines nearby
     if (row, col) in mines_location:
         print("The game is over! You hit a mine!!")
     else:
-        for r in range(row - 1, row + 2):
-            if r >= 0 and r < grid_size:
-                for c in range(col - 1, col + 2):
-                    if c >= 0 and c < grid_size:
-                        if (r, c) in mines_location:
-                            mine_count += 1
+        neighbours_locations = determine_neighbours_location(row, col)
+        for location in neighbours_locations:
+            if location in mines_location:
+                mine_count += 1    
+
     return mine_count
+
+
+# data structure
+
+grid_size, num_mines = get_game_input_parameters()                          # call the function to get grid_size and num_mines
+MIN_INDEX_VALUE = 0
+MAX_INDEX_VALUE = grid_size - 1
+board_grid = [["#" for i in range(grid_size)] for j in range(grid_size)]    # to create 2D array
+mines_location = determine_mines_location(num_mines, grid_size)             # extracting mine locations
+print(mines_location)
+place_mines(board_grid, mines_location)                                     # call game_array function to extract grid representation
+display_board(board_grid)
+
+# creating a game loop
+row_alphabets = string.ascii_uppercase[:grid_size]
+while True:
+    reveal = input("Which field to reveal?")            # asking the user to reveal a field
+    if valid_reveal_input(reveal, row_alphabets, grid_size):
+        print("Let's see if you hit a mine!")
+        row, col = convert_alphanumeric_input_to_grid_coordinate(reveal, row_alphabets)
+        mines_count = neighbouring_mines(row, col, mines_location, grid_size)
+        board_grid[row][col] = mines_count
+        display_board(board_grid)
+        break
+    else:
+        print("Error! Invalid input: Please enter a valid field (A1, B2, C3...).")    
+
 # can use this function as recursive function to check all the fields around
+# convert ABC to integer value --> use function like ord to convert character to int using ascii character
 
 # if __name__ == "__main__":
 #     game_over = False
