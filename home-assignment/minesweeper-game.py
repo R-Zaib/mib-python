@@ -1,13 +1,9 @@
-# minesweeper game home assignment
-
 import random
 import string
 import copy
 
 
 # def game_loop():
-
-
 #this will be the main game loop , have to handle the guesses of the user here, 
 # if it says its B18, it should check if it is within the game paramenters
 
@@ -37,6 +33,28 @@ def get_game_input_parameters():
     print("Let's begin the minesweeper game!")
     return grid_size, num_mines
 
+# determining the mines locations using random
+def determine_mines_location(num_mines, grid_size):
+    mine_location = []
+    while len(mine_location) < num_mines:
+        row = random.randint(0, grid_size - 1)
+        col = random.randint(0, grid_size - 1)
+        
+        if (row, col) not in mine_location:
+            mine_location.append((row, col))
+    return mine_location
+
+# mines are not restricted to grid array ---> Fix this
+# num of mines are same as grid_size
+
+def place_mines(board, mine_locations):
+    grid_size = len(board)
+    for location in mine_locations:
+        x, y = location
+        if 0 <= x < grid_size and 0 <= y < grid_size:
+            board[x][y] = "X"
+
+# creating an array with numbers and alphabets headings
 def game_array(board_grid):
     grid_size = len(board_grid)
     board_grid_number_header = [list(range(1, grid_size + 1))]
@@ -52,25 +70,6 @@ def displayBoard(grid):
     for row in grid:
         print(' '.join([str(cell) for cell in row]))
 
-# determining the mines locations using random
-def determine_mines_location(num_mines, grid_size):
-    mine_location = []
-    while num_mines > len(mine_location):
-        row = random.randint(0, grid_size - 1)
-        col = random.randint(0, grid_size - 1)
-        
-        if (row, col) not in mine_location:
-            mine_location.append((row, col))
-    return mine_location
-        
-def place_mines(board, mine_locations):
-    grid_size = len(board)
-    for location in mine_locations:
-        x, y = location
-        if 0 <= x < grid_size and 0 <= y < grid_size:
-            board[x][y] = "X"
-
-
 # validating the input to reveal a field from the board
 def valid_reveal_input(alpha_str, valid_alphabets, grid_size):
     if len(alpha_str) != 2:
@@ -85,11 +84,19 @@ def valid_reveal_input(alpha_str, valid_alphabets, grid_size):
 
 # reference https://stackoverflow.com/questions/40209158/checking-if-an-input-is-formatted-correctly-in-python-3
 
+def convert_alphanumeric_input_to_grid_coordinate(reveal, row_alphabets):
+    alphabet_row_character = reveal[0]
+    row_index = row_alphabets.index(alphabet_row_character)
+    col_index = reveal[1]
+    col_index = int(col_index) - 1
+    return (row_index, col_index)
+
 # data structure
 
 grid_size, num_mines = get_game_input_parameters()                          # call the function to get grid_size and num_mines
 board_grid = [["#" for i in range(grid_size)] for j in range(grid_size)]    # to create 2D array
 mines_location = determine_mines_location(grid_size, num_mines)             # extracting mine locations
+print(mines_location)
 place_mines(board_grid, mines_location)                                     # call game_array function to extract grid representation
 board_grid_representation = game_array(board_grid)
 displayBoard(board_grid_representation)
@@ -103,38 +110,28 @@ while True:
     reveal = input("Which field to reveal?")            # asking the user to reveal a field
     if valid_reveal_input(reveal, row_alphabets,grid_size):
         print("Let's see if you hit a mine!")
+        neighbouring_mines(row, col, mines_location, grid_size)
+        break
     else:
         print("Error! Invalid input: Please enter a valid field (A1, B2, C3...).")    
 
+# convert ABC to integer value --> use function like ord to convert character to int using ascii character
 
 # determining the neighbouring mines in board_grid
 
-# def neighbouring_mines(row, col, grid_size, baord_grid):
-#     mine_count = 0      # total number of mines nearby
-#     for r in range(row - 1, row + 2):
-#         for c in range(col - 1, col + 2):
-#             if 0 <= r < grid_size and 0 <= c < grid_size:
-#                 if board_grid[r][c] == "X":         # representing "X" here for a mine
-#                     mine_count += 1
-#     return mine_count
-
-# previously tried this with both while and for loop, but apparently it has errors.
-# then fine-tuned the code and asked ChatGPT to evaluate the final version
-# it still had errors such range of c was not within range of r
-
-# this is comment for testing purpose only
-
-# def neighbouring_mines(row, col, grid_size):
-#     mine_count = 0      # total number of mines nearby
-#     r = row - 1
-#     while r <= row + 1:      # to check in rows from a range between (row - 1, row + 1)
-#         if r >= 0 and r < grid_size:
-#             r += 1
-#     c = col - 1
-#     while c <= col + 1:
-#         if c >= 0 and c < grid_size:
-#             c += 1
-#     return mine_count
+def neighbouring_mines(row, col, mines_location, grid_size):
+    mine_count = 0      # total number of mines nearby
+    if (row, col) in mines_location:
+        print("The game is over! You hit a mine!!")
+    else:
+        for r in range(row - 1, row + 2):
+            if r >= 0 and r < grid_size:
+                for c in range(col - 1, col + 2):
+                    if c >= 0 and c < grid_size:
+                        if (r, c) in mines_location:
+                            mine_count += 1
+    return mine_count
+# can use this function as recursive function to check all the fields around
 
 # if __name__ == "__main__":
 #     game_over = False
