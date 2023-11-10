@@ -1,6 +1,7 @@
 import random
 import string
 import copy
+import time
 
 random.seed(1) # to fix the random selection, remove it after testing
 
@@ -8,8 +9,13 @@ random.seed(1) # to fix the random selection, remove it after testing
 #this will be the main game loop , have to handle the guesses of the user here, 
 # if it says its B18, it should check if it is within the game paramenters
 
-# asking the user to enter the game parameters to play
 def get_game_input_parameters():
+    """ 
+    to start the game, i ask the user about grid size and number of mines to be placed
+    function gets user input for game parameters: grid size and number of mines
+    the function accepts both parameters as int and returns integar value
+    for both the grid size and number of mines
+    """
     while True:         # asking user for grid size to play
         try:    
             grid_size = int(input("Enter the board to play: "))
@@ -34,8 +40,13 @@ def get_game_input_parameters():
     print("Let's begin the minesweeper game!")
     return grid_size, num_mines
 
-# determining the mines locations using random
 def determine_mines_location(num_mines, grid_size):
+    """ 
+    to scatter the mines randomly on game baord, using the random function to determine locations 
+    for placing mines
+    the function takes in num_mines and grid_size as input as integers
+    it returns a pair of (row, col) coordinates representing mine locations to place mines
+    """
     mine_location = []
     while len(mine_location) < num_mines:
         row = random.randint(0, grid_size - 1)
@@ -45,29 +56,39 @@ def determine_mines_location(num_mines, grid_size):
             mine_location.append((row, col))
     return mine_location
 
-# mines are not restricted to grid array ---> Fix this
-# num of mines are same as grid_size
-
 def place_mines(board, mine_locations):
+    """ 
+    in order to drop mines as 'X's on the game board
+    the function marks the board with mines based on the provided mine locations
+    """
     grid_size = len(board)
     for location in mine_locations:
         x, y = location
         if 0 <= x < grid_size and 0 <= y < grid_size:
             board[x][y] = "X"
 
-# creating an array with numbers and alphabets headings
 def game_array(board_grid):
+    """ 
+    to turn the game board into an indexed grid, the function takes in board_grid (list of list) and
+    adds row and column indices to the game board as 1 2 3 4... and A B C D...
+    it also imports and use deepcopy to combine the header (as a separate list) and board grid
+    """
     grid_size = len(board_grid)
-    board_grid_number_header = [list(range(1, grid_size + 1))]
+    board_grid_number_header = [list(range(1, grid_size + 1))]      # header is created as a separate list
     board_grid_representation = board_grid_number_header + copy.deepcopy(board_grid)
 
-    aphabets_indices = " " + string.ascii_uppercase[:grid_size] # string/list/tuple slicing applicable to **ordered** data structure
-    for row_index, row in enumerate(board_grid_representation):
+    aphabets_indices = " " + string.ascii_uppercase[:grid_size]     # slicing acsii characters till grid_size
+    for row_index, row in enumerate(board_grid_representation):     
         row.insert(0, aphabets_indices[row_index])
     return board_grid_representation
 
 # printing the board size in 2D shape with rows and columns as grid_size
 def display_board(board_grid):
+# reference https://stackoverflow.com/questions/69489264/i-need-to-print-the-two-dimensional-list-mult-table-by-row-and-column
+    """ 
+    to show/display/print the game board without spaces used the ' '.join 
+    and displayed the game board grid with row and column indices.
+    """
     board_grid_representation = game_array(board_grid)
     for row in board_grid_representation:
         print(' '.join([str(cell) for cell in row]))
@@ -119,7 +140,12 @@ def determine_neighbours_location(x_coordinate, y_coordinate):
     return neighbour_location_pairs
 
 
-def neighbouring_mines(row, col, mines_location, grid_size):
+def neighbouring_mines(row, col, mines_location):
+    """
+    Given row, col as coordinates of a position on board, the function calculates the 
+    count of mines in its neighbourhood. For this it requires the list of mines_location, where each entry
+    is a pair representing location where mine is placed
+    """
     mine_count = 0      # total number of mines nearby
     if (row, col) in mines_location:
         print("The game is over! You hit a mine!!")
@@ -132,33 +158,85 @@ def neighbouring_mines(row, col, mines_location, grid_size):
     return mine_count
 
 
+def slow_type(t):
+# https://stackoverflow.com/questions/4099422/printing-slowly-simulate-typing
+    """ 
+    i wanted to add a time delay in my response for the user to make the game
+    look visually appealing. 
+    i used the link shared above to learn how I could do it and added the function
+    """
+    import sys
+    typing_speed = 80 #wpm
+    for l in t:
+        sys.stdout.write(l)
+        sys.stdout.flush()
+        time.sleep(random.random()*10.0/typing_speed)
+    
+    print()
+
+
 # data structure
 
 grid_size, num_mines = get_game_input_parameters()                          # call the function to get grid_size and num_mines
 MIN_INDEX_VALUE = 0
 MAX_INDEX_VALUE = grid_size - 1
 board_grid = [["#" for i in range(grid_size)] for j in range(grid_size)]    # to create 2D array
-mines_location = determine_mines_location(num_mines, grid_size)             # extracting mine locations
-print(mines_location)
-place_mines(board_grid, mines_location)                                     # call game_array function to extract grid representation
+mines_locations = determine_mines_location(num_mines, grid_size)             # extracting mine locations
+print(mines_locations)
+place_mines(board_grid, mines_locations)                                     # call game_array function to extract grid representation
 display_board(board_grid)
 
-# creating a game loop
+def remove_duplicates(duplicate_list):
+    unique_list = list(set(duplicate_list))
+
+    return unique_list
+
+def reveal_field(coordinates, mines_locations, revealed_locations, locations_to_reveal):
+    row, col = coordinates
+    mines_count = neighbouring_mines(row, col, mines_locations)
+    board_grid[row][col] = str(mines_count)
+    revealed_locations.append(coordinates)
+
+    if mines_count == 0:
+        neighbours_locations_pairs = determine_neighbours_location(row, col)
+        for location in neighbours_locations_pairs:
+            if location not in revealed_locations:
+                locations_to_reveal.append(location)
+        locations_to_reveal = remove_duplicates(locations_to_reveal)
+
+    return locations_to_reveal
+
 row_alphabets = string.ascii_uppercase[:grid_size]
-while True:
+revealed_locations = []
+locations_to_reveal = []
+
+while len(revealed_locations) + num_mines != grid_size ** 2:
     reveal = input("Which field to reveal?")            # asking the user to reveal a field
     if valid_reveal_input(reveal, row_alphabets, grid_size):
-        print("Let's see if you hit a mine!")
-        row, col = convert_alphanumeric_input_to_grid_coordinate(reveal, row_alphabets)
-        mines_count = neighbouring_mines(row, col, mines_location, grid_size)
-        board_grid[row][col] = mines_count
+        # slow_type("Let's see if you hit a mine!")
+        # time.sleep(1)
+        coordinates  = convert_alphanumeric_input_to_grid_coordinate(reveal, row_alphabets)
+        locations_to_reveal.append(coordinates)
+        while locations_to_reveal:
+            coordinates = locations_to_reveal.pop(0)
+            if coordinates in revealed_locations:
+                print("This field has been revealed already.")
+                display_board(board_grid)
+            elif coordinates in mines_locations:
+                print("You hit a mine.")
+                print("Game Over!")
+                break
+            else:
+                locations_to_reveal = reveal_field(coordinates, mines_locations, revealed_locations, locations_to_reveal)
+
+
         display_board(board_grid)
-        break
     else:
         print("Error! Invalid input: Please enter a valid field (A1, B2, C3...).")    
 
+print("Congratulations, you won!!")
+
 # can use this function as recursive function to check all the fields around
-# convert ABC to integer value --> use function like ord to convert character to int using ascii character
 
 # if __name__ == "__main__":
 #     game_over = False
@@ -166,17 +244,4 @@ while True:
 #         game_loop()
 #     quit()
     
-#pass game over, work this game over on functionality 
-#check within my function, whether it is over or not
-#situations in which the game is over.
-
-    # """ 
-    # hide it or have a completely separate data structure (recommended) - for the showing part
-    # use slices to create new list, it produces slice from start to end-1   my_list[start:end]
-    # """
-
-# print('\n'.join([''.join(['{:4}'.format(item) for item in row]) 
-#       for row in board_grid]))
-
-# can also create 3/4 different levels of game = Easy, Medium, Hard / Expert
-# pygame or tkinter or pyqt5
+# creating a game loop
