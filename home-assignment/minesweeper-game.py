@@ -13,12 +13,12 @@ def get_game_input_parameters():
     while True:         # asking user for grid size to play
         try:    
             grid_size = int(input("Enter the board to play: "))
-            if grid_size > 2:
+            if 3 < grid_size < 10 :
                 break
             else:
-                print("Error: Invalid input. Please enter a positive number. ")  
+                slow_type("Error: Invalid input. Please enter a number between 4 to 9.")  
         except ValueError:
-            print("Error: Invalid input. Please enter a positive number.")
+            slow_type("Error: Invalid input. Please enter a positive number.")
         
     while True:         # asking for number of mines to be placed
         try:
@@ -27,11 +27,11 @@ def get_game_input_parameters():
             if grid_size <= num_mines and num_mines <= max_mines:
                 break
             else:
-                print("Error: Invalid input. Please enter a number in range of ", grid_size, "and", max_mines)
+                slow_type("Error: Invalid input. Please enter a number in range of ", grid_size, "and", max_mines)
         except ValueError:
-            print("Error: Invalid input. Please enter a positive number.")    
+            slow_type("Error: Invalid input. Please enter a positive number.")    
 
-    print("Let's begin the minesweeper game!")
+    slow_type("Let's begin the minesweeper game!")
     return grid_size, num_mines
 
 def determine_mines_location(num_mines, grid_size):
@@ -147,8 +147,7 @@ def determine_neighbours_location(x_coordinate, y_coordinate):
     neighbour_location_pairs.remove(remove_pair)
     return neighbour_location_pairs
 
-
-def neighbouring_mines(row, col, mines_locations):
+def neighbouring_mines(row, col, mines_location):
     """
     Given row, col as coordinates of a position on board, the function calculates the 
     count of mines in its neighbourhood. For this it requires the list of mines_location, where each entry
@@ -173,7 +172,7 @@ def slow_type(t):
     used the reference to create this effect
     """
     import sys
-    typing_speed = 120 #wpm
+    typing_speed = 140 #wpm
     for l in t:
         sys.stdout.write(l)
         sys.stdout.flush()
@@ -223,6 +222,47 @@ def continue_playing_game(revealed_locations, num_mines, grid_size):
     """
     return len(revealed_locations) + num_mines != grid_size ** 2
 
+minesweeper_welcome_art = """
+   _   _   _   _   _   _   _   _   _   _   _   _     
+  / \ / \ / \ / \ / \ / \ / \ / \ / \ / \ / \ / \  
+ ( M | I | N | E | S | W | E | E | P | E | R | ! )
+  \_/ \_/ \_/ \_/ \_/ \_/ \_/ \_/ \_/ \_/ \_/ \_/ 
+"""
+
+minesweeper_gameover_art = """
+   _____          __  __ ______    ______       ________ _____  
+  / ____|   /\   |  \./  |  ____|  / __ \ \     / /  ____|  __ \ 
+ | |  __   /  \  |  \  / | |__    | |  | \ \   / /| |__  | |__) |
+ | | |_ | / /\ \ | |\./| |  __|   | |  | |\ \./ / |  __| |  _  / 
+ | |__| |/ ____ \| |  || | |____  | |__| | \   /  | |____| | \ \ 
+  \_____/_/    \_\_|  |_ |______|  \____/   \./   |______|_|  \_\ 
+"""
+
+welcome_text = """
+Welcome to Minesweeper Game!
+
+Game Rules:
+1. The game is played on a grid of squares.
+2. Some squares contain mines, while others are safe.
+3. You will be asked to enter a number for grid size and number of mines.
+4. The grid size can range between 4 to 9.
+5. The number of mines must be at least equal to the grid size.
+6. The maximum number of mines cannot exceed grid size x 4 (for 5x5 grid, max mines can only be 20 mines).
+7. Your goal is to uncover all safe squares without hitting a mine.
+8. Numbers on uncovered squares indicate the count of mines in adjacent squares.
+9. Use the heading combination as alphabet and number to reveal a mine (for example A1, B2, C3 etc).
+10. If you win, you can play again by entering "y" upon winning, but if you lose, the game ends!
+
+Be careful! Uncovering a mine ends the game.
+
+Good luck, and enjoy the Minesweeper challenge!
+"""
+
+print(minesweeper_welcome_art)
+time.sleep(2)
+print(welcome_text)
+time.sleep(4)
+
 
 if __name__ == "__main__":
 
@@ -244,7 +284,7 @@ if __name__ == "__main__":
 
 
         while continue_playing_game(revealed_locations, num_mines, grid_size):
-            reveal = input("Which field to reveal?")            # asking the user to reveal a field
+            reveal = input("Which field to reveal? ")            # asking the user to reveal a field
             if valid_reveal_input(reveal, row_alphabets, grid_size):
                 slow_type("Let's see if you hit a mine!")
                 time.sleep(1)
@@ -253,11 +293,10 @@ if __name__ == "__main__":
                 while locations_to_reveal:
                     coordinates = locations_to_reveal.pop(0)
                     if coordinates in revealed_locations:
-                        print("This field has been revealed already.")
-                        display_board(board_grid)
+                        slow_type("This field has been revealed already.")
                     elif coordinates in mines_locations:
-                        print("You hit a mine!!")
-                        print("Game Over!")
+                        slow_type("You hit a mine!!")
+                        print(minesweeper_gameover_art)
                         quit()
                     else:
                         locations_to_reveal = reveal_field(coordinates, mines_locations, revealed_locations, locations_to_reveal)
@@ -265,9 +304,9 @@ if __name__ == "__main__":
 
                 display_board(board_grid)
             else:
-                print("Error! Invalid input: Please enter a valid field (A1, B2, C3...).")    
+                slow_type("Error! Invalid input: Please enter a valid field (A1, B2, C3...).")    
 
-        print("Congratulations, you won!!")
+        slow_type("Congratulations, you won!!")
         play_again_input = input("Press y to play again or any other key to exit: ")
         if play_again_input != 'y':
             play_again = False
