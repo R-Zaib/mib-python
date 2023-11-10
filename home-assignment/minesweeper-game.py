@@ -5,10 +5,6 @@ import time
 
 random.seed(1) # to fix the random selection, remove it after testing
 
-# def game_loop():
-#this will be the main game loop , have to handle the guesses of the user here, 
-# if it says its B18, it should check if it is within the game paramenters
-
 def get_game_input_parameters():
     """ 
     to start the game, i ask the user about grid size and number of mines to be placed
@@ -166,7 +162,7 @@ def slow_type(t):
     i used the link shared above to learn how I could do it and added the function
     """
     import sys
-    typing_speed = 80 #wpm
+    typing_speed = 120 #wpm
     for l in t:
         sys.stdout.write(l)
         sys.stdout.flush()
@@ -174,17 +170,6 @@ def slow_type(t):
     
     print()
 
-
-# data structure
-
-grid_size, num_mines = get_game_input_parameters()                          # call the function to get grid_size and num_mines
-MIN_INDEX_VALUE = 0
-MAX_INDEX_VALUE = grid_size - 1
-board_grid = [["#" for i in range(grid_size)] for j in range(grid_size)]    # to create 2D array
-mines_locations = determine_mines_location(num_mines, grid_size)             # extracting mine locations
-print(mines_locations)
-place_mines(board_grid, mines_locations)                                     # call game_array function to extract grid representation
-display_board(board_grid)
 
 def remove_duplicates(duplicate_list):
     unique_list = list(set(duplicate_list))
@@ -206,42 +191,59 @@ def reveal_field(coordinates, mines_locations, revealed_locations, locations_to_
 
     return locations_to_reveal
 
-row_alphabets = string.ascii_uppercase[:grid_size]
-revealed_locations = []
-locations_to_reveal = []
-
-while len(revealed_locations) + num_mines != grid_size ** 2:
-    reveal = input("Which field to reveal?")            # asking the user to reveal a field
-    if valid_reveal_input(reveal, row_alphabets, grid_size):
-        # slow_type("Let's see if you hit a mine!")
-        # time.sleep(1)
-        coordinates  = convert_alphanumeric_input_to_grid_coordinate(reveal, row_alphabets)
-        locations_to_reveal.append(coordinates)
-        while locations_to_reveal:
-            coordinates = locations_to_reveal.pop(0)
-            if coordinates in revealed_locations:
-                print("This field has been revealed already.")
-                display_board(board_grid)
-            elif coordinates in mines_locations:
-                print("You hit a mine.")
-                print("Game Over!")
-                break
-            else:
-                locations_to_reveal = reveal_field(coordinates, mines_locations, revealed_locations, locations_to_reveal)
+def continue_playing_game(revealed_locations, num_mines, grid_size):
+    return len(revealed_locations) + num_mines != grid_size ** 2
 
 
+if __name__ == "__main__":
+
+    play_again = True
+    while play_again:
+    # data structure
+        grid_size, num_mines = get_game_input_parameters()                          # call the function to get grid_size and num_mines
+        MIN_INDEX_VALUE = 0
+        MAX_INDEX_VALUE = grid_size - 1
+        board_grid = [["#" for i in range(grid_size)] for j in range(grid_size)]    # to create 2D array
+        mines_locations = determine_mines_location(num_mines, grid_size)             # extracting mine locations
+        # print(mines_locations)
+        # place_mines(board_grid, mines_locations)                                     # call game_array function to extract grid representation
         display_board(board_grid)
-    else:
-        print("Error! Invalid input: Please enter a valid field (A1, B2, C3...).")    
 
-print("Congratulations, you won!!")
+        row_alphabets = string.ascii_uppercase[:grid_size]
+        revealed_locations = []
+        locations_to_reveal = []
 
-# can use this function as recursive function to check all the fields around
 
-# if __name__ == "__main__":
-#     game_over = False
-#     while not game_over:
-#         game_loop()
-#     quit()
+        while continue_playing_game(revealed_locations, num_mines, grid_size):
+            reveal = input("Which field to reveal?")            # asking the user to reveal a field
+            if valid_reveal_input(reveal, row_alphabets, grid_size):
+                slow_type("Let's see if you hit a mine!")
+                time.sleep(1)
+                coordinates  = convert_alphanumeric_input_to_grid_coordinate(reveal, row_alphabets)
+                locations_to_reveal.append(coordinates)
+                while locations_to_reveal:
+                    coordinates = locations_to_reveal.pop(0)
+                    if coordinates in revealed_locations:
+                        print("This field has been revealed already.")
+                        display_board(board_grid)
+                    elif coordinates in mines_locations:
+                        print("You hit a mine.")
+                        print("Game Over!")
+                        quit()
+                    else:
+                        locations_to_reveal = reveal_field(coordinates, mines_locations, revealed_locations, locations_to_reveal)
+
+
+                display_board(board_grid)
+            else:
+                print("Error! Invalid input: Please enter a valid field (A1, B2, C3...).")    
+
+        print("Congratulations, you won!!")
+        play_again_input = input("Press y to play again or any other key to exit: ")
+        if play_again_input != 'y':
+            play_again = False
     
-# creating a game loop
+    slow_type("Thank you for playing. Good bye!")
+    
+
+
