@@ -1,69 +1,43 @@
-# Developing Minesweeper game as the project for the first semester. 
+# Minesweeper CLI Game
 
-Requirements are as follows: Minesweeper
+## How to Install
+1. Clone the repository from: https://github.com/R-Zaib/mib-python.git
+2. Make sure you have Python 3 installed.
+3. Open your terminal in the project directory, navigate to mib-python/home-assignment.
 
-Create a command line minesweeper.
+## How to Run the Game
+- Run `python minesweeper-game.py` in your terminal.
 
-The application on start should ask for two numbers: the size of the board that will be a square, as well as the number of mines to be placed on it.
+## How to Play
+1. Enter grid size between 4 to 9.
+2. The number of mines must be at least equal to the grid size and maximum of (grid size x 4).
+3. Goal: Uncover all safe squares without hitting a mine.
+4. Numbers on uncovered squares indicate adjacent mine count.
+5. Use the format "A1," "B2," "C3," etc., to reveal a mine.
+6. If you win, you can play again by entering "y" upon winning.
+7. If you lose, the game ends.
 
-Both of them should be positive integers, the application should alert the user if the values are not, and reprompt.
+## Limitations of the Game
+- No graphical interface, the game supports CLI (Command Line Interface) only.
+- Limited to a fixed grid size between 4x4 and 9x9 grid.
 
-After getting the initial values the application should render the board, and ask the user for a field to reveal.
+## Known Issues
+**Input Validation:**
+- Limited input validation; entering non-numeric values for grid size or mines may cause unexpected behavior.
+**Restart Prompt:**
+- The restart prompt is not available for situation when a mine is hit.
 
-Example:
+## Important
+- Read the game rules carefully.
 
-How big the board should be?
+### Version 1.0.0 (2023-11-10)
+**Initial Release:**
+- Minesweeper CLI game with basic functionality.
+- Supports grid sizes from 4x4 to 9x9.
+- Allows customization of the number of mines.
 
-> 5
+## Contributing
+- If you'd like to contribute to the project, please follow me on Github and reach out.
 
-How many mines are to be placed?
-
-> 7
-
-    1 2 3 4 5
-
-A # # # # #
-
-B # # # # #
-
-C # # # # #
-
-D # # # # #
-
-E # # # # #
-
-What field to reveal?
-
->
-
-When the user enters the field to reveal (eg: B3) the field gets revealed:
-
-if it's a mine, the game is over, the user lost, the application exits
-
-if it's not a mine, but has mine as neighbours, the field changes to the number showing the number of the neighboring mines discovery: if it has no neighbouring mines, it reveals all fields until there are.
-
-What field to reveal?
-
-> B3
-
-    1 2 3 4 5
-
-A # 1 0 0 0
-
-B # 1 0 0 0
-
-C # 2 1 1 0
-
-D # # # 2 1
-
-E # # # # #
-
-What field to reveal?
-
-> E1
-
-etc.
-
-The game is over and the application prompts the result. The user reveals a mine, and the user loses.
-
-The user reveals each field that is not a mine, the user wins. then prompts to replay or exit.
+## License
+- This Minesweeper CLI game is an open licensed free to use (for educational purposes only).
