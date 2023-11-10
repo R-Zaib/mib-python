@@ -30,7 +30,7 @@
 ## Important
 - Read the game rules carefully.
 
-### Version 1.0.0 (2023-11-10)
+## Version 1.0.0 (2023-11-10)
 **Initial Release:**
 - Minesweeper CLI game with basic functionality.
 - Supports grid sizes from 4x4 to 9x9.
